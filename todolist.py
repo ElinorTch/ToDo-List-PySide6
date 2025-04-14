@@ -35,8 +35,16 @@ class MyWidget(QDialog):
     @QtCore.Slot()
     def add_task(self):
         text = QLabel(f"{self.edit.text()}")
+        text.mouseDoubleClickEvent = self.delete_label(text)
         self.tasks_layout.addWidget(text)
         self.edit.clear()
+
+    def delete_label(self, label):
+        def delete_label(event):
+            self.tasks_layout.removeWidget(label)
+            label.deleteLater()
+        return delete_label
+
     
     @QtCore.Slot()
     def delete_tasks(self):
