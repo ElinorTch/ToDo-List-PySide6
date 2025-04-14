@@ -1,7 +1,7 @@
 import sys
 import random
 from PySide6 import QtCore
-from PySide6.QtWidgets import (QApplication, QDialog, QGroupBox,QLabel, QLineEdit, QPushButton, QVBoxLayout)
+from PySide6.QtWidgets import (QListWidget, QListWidgetItem, QApplication, QDialog, QGroupBox,QLabel, QLineEdit, QPushButton, QVBoxLayout)
 
 
 class MyWidget(QDialog):
@@ -10,10 +10,13 @@ class MyWidget(QDialog):
         super().__init__()
 
         self.setWindowTitle("ToDo-List")
-        self.create_tasks_group_box()
+        # self.create_tasks_group_box()
         
         self.edit = QLineEdit("")
         button = QPushButton("Tout supprimer")
+        self.tasks_list = QListWidget()
+        self.tasks_list.itemDoubleClicked.connect(self.delete_task)
+
         button.setAutoDefault(False)
 
         button.clicked.connect(self.delete_tasks)
@@ -21,39 +24,21 @@ class MyWidget(QDialog):
 
         main_layout = QVBoxLayout(self)
 
-        main_layout.addWidget(self._tasks_group_box)
+        main_layout.addWidget(self.tasks_list)
         main_layout.addWidget(self.edit)
         main_layout.addWidget(button)
 
-    
-    def create_tasks_group_box(self):
-        self._tasks_group_box = QGroupBox("Liste des taches")
-        self.tasks_layout = QVBoxLayout()
-        self.tasks_layout.setAlignment(QtCore.Qt.AlignTop)
-        self._tasks_group_box.setLayout(self.tasks_layout)
-
     @QtCore.Slot()
     def add_task(self):
-        text = QLabel(f"{self.edit.text()}")
-        text.mouseDoubleClickEvent = self.delete_label(text)
-        self.tasks_layout.addWidget(text)
+        self.tasks_list.addItem(f"{self.edit.text()}")
         self.edit.clear()
 
-    def delete_label(self, label):
-        def delete_label(event):
-            self.tasks_layout.removeWidget(label)
-            label.deleteLater()
-        return delete_label
-
-    
+    def delete_task(self, item):
+        self.tasks_list.takeItem(self.tasks_list.row(item))  
+        
     @QtCore.Slot()
     def delete_tasks(self):
-        while self.tasks_layout.count():
-            item = self.tasks_layout.takeAt(0)
-
-            widget = item.widget()
-            if widget is not None:
-                widget.setParent(None)
+        self.tasks_list.clear()
 
 
 if __name__ == "__main__":
