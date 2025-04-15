@@ -4,20 +4,19 @@ from PySide6.QtWidgets import (QListWidget, QListWidgetItem, QApplication, QDial
 import sqlite3
 
 
-con = sqlite3.connect("todolist.db")
-cur = con.cursor()
-tasks = cur.execute("SELECT description FROM task").fetchall()
-
 class MyWidget(QDialog):
 
-    def __init__(self):
+    def __init__(self, task_business_logic):
         super().__init__()
+
+        self.task_service = task_business_logic
 
         self.setWindowTitle("ToDo-List")
         
         self.edit = QLineEdit("")
         button = QPushButton("Tout supprimer")
 
+        tasks = self.task_service.get_all()
         self.tasks_list = QListWidget()
         for task in tasks:
             self.tasks_list.addItem(f"{task[0]}")
@@ -36,28 +35,16 @@ class MyWidget(QDialog):
 
     @QtCore.Slot()
     def add_task(self):
-        cur.execute(f"INSERT INTO task('description') VALUES ('{self.edit.text()}')")
-        con.commit()
+        self.task_service.insert(self.edit.text())
         self.tasks_list.addItem(f"{self.edit.text()}")
         self.edit.clear()
 
+    @QtCore.Slot()
     def delete_task(self, item):
         self.tasks_list.takeItem(self.tasks_list.row(item))  
-        cur.execute(f"DELETE FROM task WHERE description='{item.text()}'")
-        con.commit()
+        self.task_service.delete_one(item.text())
         
     @QtCore.Slot()
     def delete_tasks(self):
         self.tasks_list.clear()
-        cur.execute("DELETE FROM task;")
-        con.commit()
-
-
-if __name__ == "__main__":
-    app = QApplication([])
-
-    widget = MyWidget()
-    widget.resize(250, 300)
-    widget.show()
-
-    sys.exit(app.exec())
+        self.task_service.delete_all()
