@@ -1,4 +1,4 @@
-from task_repository import Task_repository
+from logic.task_repository import Task_repository
 import sqlite3
 
 class Task_repository_implement(Task_repository):

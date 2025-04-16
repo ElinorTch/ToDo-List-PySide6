@@ -1,7 +1,5 @@
-import sys
 from PySide6 import QtCore
-from PySide6.QtWidgets import (QListWidget, QListWidgetItem, QApplication, QDialog, QGroupBox,QLabel, QLineEdit, QPushButton, QVBoxLayout)
-import sqlite3
+from PySide6.QtWidgets import (QListWidget, QApplication, QDialog, QLineEdit, QPushButton, QVBoxLayout)
 
 
 class MyWidget(QDialog):

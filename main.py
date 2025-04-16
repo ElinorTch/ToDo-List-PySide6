@@ -1,8 +1,8 @@
 from PySide6.QtWidgets import QApplication
-from task_user_side import MyWidget
+from view.task_user_side import MyWidget
 import sys
-from task_repository_implement import Task_repository_implement
-from task_business_logic import Task_business_logic
+from server.task_repository_implement import Task_repository_implement
+from logic.task_business_logic import Task_business_logic
 
 if __name__ == "__main__":
     repo = Task_repository_implement()
