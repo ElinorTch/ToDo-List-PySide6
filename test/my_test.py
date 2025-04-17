@@ -4,12 +4,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
 import unittest
-from logic.task_business_logic import Task_business_logic
-from server.task_repository_implement import Task_repository_implement
+from logic.task_business_logic import TaskBusinessLogic
+from server.task_repository_implement import TaskRepositoryImplement
 
 class TestListeOperations(unittest.TestCase):
-    repo = Task_repository_implement()
-    task_service = Task_business_logic(repo)
+    repo = TaskRepositoryImplement()
+    task_service = TaskBusinessLogic(repo)
 
     def test_insert_item(self):
         self.task_service.insert("Description 1")

@@ -1,4 +1,4 @@
-class Task_business_logic():
+class TaskBusinessLogic():
 
     def __init__(self, task_repository):
         self.repo = task_repository
