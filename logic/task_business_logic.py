@@ -17,3 +17,6 @@ class TaskBusinessLogic():
 
     def checked(self, is_checked, description):
         return self.repo.checked(is_checked, description)
+    
+    def update(self, description, new_description):
+        return self.repo.update(description, new_description)

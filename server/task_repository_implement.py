@@ -30,3 +30,7 @@ class TaskRepositoryImplement(TaskRepository):
     def checked(self, checked, description):
         self.cur.execute(f"UPDATE tasks SET done = {checked} WHERE description = '{description}'")
         self.con.commit()
+
+    def update(self, description, new_description):
+        self.cur.execute(f"UPDATE tasks SET description = '{new_description}' WHERE description = '{description}'")
+        self.con.commit()
