@@ -1,5 +1,5 @@
 from PySide6 import QtCore
-from PySide6.QtWidgets import (QLabel, QFrame, QListWidget, QInputDialog, QDialog, QLineEdit, QPushButton, QVBoxLayout)
+from PySide6.QtWidgets import (QComboBox, QListWidget, QInputDialog, QDialog, QLineEdit, QPushButton, QVBoxLayout)
 
 
 class MyWidget(QDialog):
@@ -11,8 +11,6 @@ class MyWidget(QDialog):
         self.category_service = category_business_logic
 
         self.setWindowTitle("ToDo-List")
-
-        frame_style = QFrame.Shadow.Sunken | QFrame.Shape.Panel
         
         self.edit = QLineEdit("")
         self.edit.returnPressed.connect(self.add_task)
@@ -25,16 +23,22 @@ class MyWidget(QDialog):
         self.category_button_dialog.setAutoDefault(False)
 
         tasks = self.task_service.get_all()
+        categories = self.category_service.get_all()
+
         self.tasks_list = QListWidget()
         for task in tasks:
             self.tasks_list.addItem(f"{task[0]}")
         self.tasks_list.itemDoubleClicked.connect(self.delete_task)
 
+        self.category_choice = QComboBox()
+        for categorie in categories:
+            self.category_choice.addItems(categorie) 
 
         main_layout = QVBoxLayout(self)
 
         main_layout.addWidget(self.tasks_list)
         main_layout.addWidget(self.edit)
+        main_layout.addWidget(self.category_choice)
         main_layout.addWidget(self.category_button_dialog)
         main_layout.addWidget(button)
 
