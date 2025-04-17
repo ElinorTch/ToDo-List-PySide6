@@ -14,3 +14,6 @@ class TaskBusinessLogic():
 
     def get_all(self, categorie_label):
         return self.repo.get_all(categorie_label)
+
+    def checked(self, is_checked, description):
+        return self.repo.checked(is_checked, description)
