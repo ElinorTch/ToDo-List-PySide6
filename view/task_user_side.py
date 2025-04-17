@@ -23,6 +23,9 @@ class MyWidget(QDialog):
             for task in tasks:
                 child = QTreeWidgetItem([task[0]])
                 item.addChild(child)
+                child.setFlags(child.flags() | QtCore.Qt.ItemIsUserCheckable)
+                child.setCheckState(0, QtCore.Qt.Unchecked)
+                self.tree.itemDoubleClicked.connect(self.delete_task)
             items.append(item)
 
         self.tree.insertTopLevelItems(0, items)
@@ -37,12 +40,6 @@ class MyWidget(QDialog):
         self.category_button_dialog.clicked.connect(self.add_category)
         self.category_button_dialog.setAutoDefault(False)
 
-
-        self.tasks_list = QListWidget()
-        for task in tasks:
-            self.tasks_list.addItem(f"{task[0]}")
-        self.tasks_list.itemDoubleClicked.connect(self.delete_task)
-
         self.category_choice = QComboBox()
         for categorie in categories:
             self.category_choice.addItems(categorie) 
@@ -50,7 +47,6 @@ class MyWidget(QDialog):
         main_layout = QVBoxLayout(self)
 
         main_layout.addWidget(self.tree)
-        # main_layout.addWidget(self.tasks_list)
         main_layout.addWidget(self.edit)
         main_layout.addWidget(self.category_choice)
         main_layout.addWidget(self.category_button_dialog)
@@ -72,16 +68,18 @@ class MyWidget(QDialog):
     def add_task(self):
         self.task_service.insert(self.edit.text(), self.category_choice.currentText())
         item = self.tree.findItems(self.category_choice.currentText(), QtCore.Qt.MatchExactly, 0)
-        item[0].addChild(QTreeWidgetItem([self.edit.text()]))
-        self.tasks_list.addItem(f"{self.edit.text()}")
+        child = QTreeWidgetItem([self.edit.text()])
+        item[0].addChild(child)
+        child.setFlags(child.flags() | QtCore.Qt.ItemIsUserCheckable)
+        child.setCheckState(0, QtCore.Qt.Unchecked)
         self.edit.clear()
 
     @QtCore.Slot()
     def delete_task(self, item):
-        self.tasks_list.takeItem(self.tasks_list.row(item))  
-        self.task_service.delete_one(item.text())
+        self.task_service.delete_one(item.text(0))
+        if item.parent():
+            item.parent().removeChild(item)
         
     @QtCore.Slot()
     def delete_tasks(self):
-        self.tasks_list.clear()
         self.task_service.delete_all()
