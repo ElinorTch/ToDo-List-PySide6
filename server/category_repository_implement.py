@@ -12,7 +12,7 @@ class CategoryRepositoryImplement(CategoryRepository):
         self.cur = self.con.cursor()
 
     def insert(self, label):
-        self.cur.execute(f"INSERT INTO categories('label') VALUES ('{label}')")
+        self.cur.execute(f"INSERT INTO categories(label) VALUES ('{label}')")
         self.con.commit()
     
     def delete_one(self, label):

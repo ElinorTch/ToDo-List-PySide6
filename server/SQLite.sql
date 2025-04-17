@@ -1,9 +1,9 @@
 -- SQLite
-CREATE TABLE IF NOT EXIST categories(
+CREATE TABLE IF NOT EXISTS categories(
     id INTEGER PRIMARY KEY AUTOINCREMENT, 
     label TEXT);
     
-CREATE TABLE IF NOT EXIST tasks(
+CREATE TABLE IF NOT EXISTS tasks(
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 description TEXT, 
                 categorie_id INTEGER, 
