@@ -1,5 +1,5 @@
 from PySide6 import QtCore
-from PySide6.QtWidgets import (QComboBox, QListWidget, QInputDialog, QDialog, QLineEdit, QPushButton, QVBoxLayout)
+from PySide6.QtWidgets import (QTreeWidgetItem, QTreeWidget, QComboBox, QListWidget, QInputDialog, QDialog, QLineEdit, QPushButton, QVBoxLayout)
 
 
 class MyWidget(QDialog):
@@ -11,6 +11,21 @@ class MyWidget(QDialog):
         self.category_service = category_business_logic
 
         self.setWindowTitle("ToDo-List")
+
+        categories = self.category_service.get_all()
+
+        self.tree = QTreeWidget()
+        self.tree.setHeaderLabels(["Arbre des taches"])
+        items = []
+        for category in categories:
+            item = QTreeWidgetItem([category[0]])
+            tasks = self.task_service.get_all(category[0])
+            for task in tasks:
+                child = QTreeWidgetItem([task[0]])
+                item.addChild(child)
+            items.append(item)
+
+        self.tree.insertTopLevelItems(0, items)
         
         self.edit = QLineEdit("")
         self.edit.returnPressed.connect(self.add_task)
@@ -22,8 +37,6 @@ class MyWidget(QDialog):
         self.category_button_dialog.clicked.connect(self.add_category)
         self.category_button_dialog.setAutoDefault(False)
 
-        tasks = self.task_service.get_all()
-        categories = self.category_service.get_all()
 
         self.tasks_list = QListWidget()
         for task in tasks:
@@ -36,7 +49,8 @@ class MyWidget(QDialog):
 
         main_layout = QVBoxLayout(self)
 
-        main_layout.addWidget(self.tasks_list)
+        main_layout.addWidget(self.tree)
+        # main_layout.addWidget(self.tasks_list)
         main_layout.addWidget(self.edit)
         main_layout.addWidget(self.category_choice)
         main_layout.addWidget(self.category_button_dialog)
@@ -51,10 +65,14 @@ class MyWidget(QDialog):
         )
         if ok and text:
             self.category_service.insert(text)
+            self.tree.addTopLevelItem(QTreeWidgetItem([text]))
+            self.category_choice.addItem(text) 
 
     @QtCore.Slot()
     def add_task(self):
-        self.task_service.insert(self.edit.text())
+        self.task_service.insert(self.edit.text(), self.category_choice.currentText())
+        item = self.tree.findItems(self.category_choice.currentText(), QtCore.Qt.MatchExactly, 0)
+        item[0].addChild(QTreeWidgetItem([self.edit.text()]))
         self.tasks_list.addItem(f"{self.edit.text()}")
         self.edit.clear()
 

@@ -12,8 +12,8 @@ class TaskRepositoryImplement(TaskRepository):
         self.con.execute("PRAGMA foreign_keys = ON;")
         self.cur = self.con.cursor()
     
-    def insert(self, description):
-        self.cur.execute(f"INSERT INTO tasks('description') VALUES ('{description}')")
+    def insert(self, description, label):
+        self.cur.execute(f"INSERT INTO tasks('description', 'categorie_label') VALUES ('{description}', '{label}')")
         self.con.commit()
     
     def delete_one(self, description):
@@ -24,5 +24,5 @@ class TaskRepositoryImplement(TaskRepository):
         self.cur.execute("DELETE FROM tasks")
         self.con.commit()
     
-    def get_all(self):
-        return self.cur.execute("SELECT description FROM tasks").fetchall()
+    def get_all(self, categorie_label):
+        return self.cur.execute(f"SELECT description FROM tasks WHERE categorie_label = '{categorie_label}'").fetchall()

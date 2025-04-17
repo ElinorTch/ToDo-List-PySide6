@@ -13,3 +13,6 @@ class CategoryBusinessLogic():
 
     def get_all(self):
         return self.repo.get_all()
+    
+    def get_one(self, label):
+        return self.repo.get_one(label)
