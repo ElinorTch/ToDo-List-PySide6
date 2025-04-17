@@ -68,18 +68,30 @@ class MyWidget(QDialog):
     @QtCore.Slot()
     def handle_item_pressed(self, item, column):
         mouse_buttons = QApplication.mouseButtons()
-        if mouse_buttons == QtCore.Qt.RightButton:
-            pos = QCursor.pos()
-            menu = QMenu()
-            modifier = QAction("Modifier", self)
-            modifier.triggered.connect(lambda: self.modify_Category(item.text(0)))
-            menu.addAction(modifier)
-            menu.exec_(pos)
+        if item.parent() :
+            if mouse_buttons == QtCore.Qt.RightButton:
+                pos = QCursor.pos()
+                menu = QMenu()
+                modifier = QAction("Modifier", self)
+                modifier.triggered.connect(lambda: self.modify_task(item))
+                menu.addAction(modifier)
+                menu.exec_(pos)
     
     @QtCore.Slot()
-    def modify_Category(self, item):
-        print(item)
-        pass
+    def modify_task(self, item):
+        new_description, ok = QInputDialog.getText(
+            self,
+            "New Description",
+            "Enter updated description:"
+        )
+        if ok and new_description:
+            self.task_service.update(item.text(0), new_description)
+            child = QTreeWidgetItem([new_description])
+            item.parent().addChild(child)
+            child.setFlags(child.flags() | QtCore.Qt.ItemIsUserCheckable)
+            child.setCheckState(0, item.checkState(0))
+            item.parent().removeChild(item)
+
 
     @QtCore.Slot()
     def add_category(self):
