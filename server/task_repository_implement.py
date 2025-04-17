@@ -25,4 +25,8 @@ class TaskRepositoryImplement(TaskRepository):
         self.con.commit()
     
     def get_all(self, categorie_label):
-        return self.cur.execute(f"SELECT description FROM tasks WHERE categorie_label = '{categorie_label}'").fetchall()
+        return self.cur.execute(f"SELECT * FROM tasks WHERE categorie_label = '{categorie_label}'").fetchall()
+
+    def checked(self, checked, description):
+        self.cur.execute(f"UPDATE tasks SET done = {checked} WHERE description = '{description}'")
+        self.con.commit()
