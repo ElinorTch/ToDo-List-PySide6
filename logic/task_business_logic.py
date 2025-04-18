@@ -20,3 +20,6 @@ class TaskBusinessLogic():
     
     def update(self, description, new_description):
         return self.repo.update(description, new_description)
+    
+    def get_completion_pourcentage(self, label):
+        return self.repo.get_completion_pourcentage(label)

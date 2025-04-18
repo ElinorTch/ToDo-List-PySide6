@@ -34,3 +34,6 @@ class TaskRepositoryImplement(TaskRepository):
     def update(self, description, new_description):
         self.cur.execute(f"UPDATE tasks SET description = '{new_description}' WHERE description = '{description}'")
         self.con.commit()
+
+    def get_completion_pourcentage(self, label):
+        return self.cur.execute(f"SELECT COUNT(*) FROM tasks WHERE done = 1 and categorie_label = '{label}'").fetchall()
