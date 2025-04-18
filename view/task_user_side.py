@@ -15,11 +15,13 @@ class MyWidget(QDialog):
         categories = self.category_service.get_all()
 
         self.tree = QTreeWidget()
-        self.tree.setHeaderLabels(["Arbre des taches"])
+        self.tree.setHeaderLabels(["Arbre des taches", "Pourcentage de completion"])
         items = []
         for category in categories:
-            item = QTreeWidgetItem([category[0]])
             tasks = self.task_service.get_all(category[0])
+            finished_tasks = self.task_service.get_completion_pourcentage(category[0])
+            completion = (finished_tasks[0][0] / len(tasks)) * 100
+            item = QTreeWidgetItem([category[0], f"{completion} %"])
             for task in tasks:
                 child = QTreeWidgetItem([task[1]])
                 item.addChild(child)
@@ -87,9 +89,9 @@ class MyWidget(QDialog):
         if ok and new_description:
             self.task_service.update(item.text(0), new_description)
             child = QTreeWidgetItem([new_description])
-            item.parent().addChild(child)
             child.setFlags(child.flags() | QtCore.Qt.ItemIsUserCheckable)
             child.setCheckState(0, item.checkState(0))
+            item.parent().addChild(child)
             item.parent().removeChild(item)
 
 
