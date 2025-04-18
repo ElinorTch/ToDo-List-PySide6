@@ -1,3 +1,4 @@
+from PySide6 import QtGui
 from PySide6.QtWidgets import QApplication
 from view.task_user_side import MyWidget
 import sys
@@ -14,9 +15,14 @@ if __name__ == "__main__":
     category_service = CategoryBusinessLogic(category_rep)
 
     app = QApplication([])
+    
+    font_id = QtGui.QFontDatabase.addApplicationFont("view/assets/fonts/Poppins-Regular.ttf")
+    font_family = QtGui.QFontDatabase.applicationFontFamilies(font_id)[0]
+
+    app.setFont(QtGui.QFont(font_family, 11))
 
     widget = MyWidget(task_service, category_service)
-    widget.resize(250, 300)
+    widget.resize(450, 500)
     widget.show()
 
     sys.exit(app.exec())

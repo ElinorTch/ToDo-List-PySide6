@@ -20,8 +20,14 @@ class MyWidget(QDialog):
         for category in categories:
             tasks = self.task_service.get_all_by_category(category[0])
             finished_tasks = self.task_service.get_completion_pourcentage(category[0])
-            completion = (finished_tasks[0][0] / len(tasks)) * 100
+            if len(tasks) > 0:
+                completion = (finished_tasks[0][0] / len(tasks)) * 100
+            else:
+                completion = 0
             item = QTreeWidgetItem([category[0], f"{completion:.0f}%"])
+            font = item.font(0)
+            font.setBold(True)
+            item.setFont(0, font)
             for task in tasks:
                 child = QTreeWidgetItem([task[1]])
                 item.addChild(child)
@@ -134,7 +140,11 @@ class MyWidget(QDialog):
         )
         if ok and text:
             self.category_service.insert(text)
-            self.tree.addTopLevelItem(QTreeWidgetItem([text]))
+            item = QTreeWidgetItem([text])
+            font = item.font(0)
+            font.setBold(True)
+            item.setFont(0, font)
+            self.tree.addTopLevelItem(item)
             self.category_choice.addItem(text) 
 
     @QtCore.Slot()
@@ -143,7 +153,7 @@ class MyWidget(QDialog):
         item = self.tree.findItems(self.category_choice.currentText(), QtCore.Qt.MatchExactly, 0)
         child = QTreeWidgetItem([self.edit.text()])
         item[0].addChild(child)
-        child.setFlags(child.flags() | QtCore.Qt.ItemIsUserCheckable)
+        # child.setFlags(child.flags() | QtCore.Qt.ItemIsUserCheckable)
         child.setCheckState(0, QtCore.Qt.Unchecked)
         self.edit.clear()
 
