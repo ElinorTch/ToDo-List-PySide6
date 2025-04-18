@@ -34,7 +34,6 @@ class MyWidget(QDialog):
             items.append(item)
 
         self.tree.insertTopLevelItems(0, items)
-        # self.tree.itemClicked.connect(self.on_item_clicked)
 
         self.tree.itemPressed.connect(self.handle_item_pressed)
         self.tree.itemChanged.connect(self.on_item_checked)
@@ -60,12 +59,7 @@ class MyWidget(QDialog):
         main_layout.addWidget(self.category_choice)
         main_layout.addWidget(self.category_button_dialog)
         main_layout.addWidget(button)
-
-    # @QtCore.Slot()
-    # def on_item_clicked(self, item):
-    #     print(item.text(0))
         
-
     @QtCore.Slot()
     def on_item_checked(self, item, column):
         parent = item.parent()
