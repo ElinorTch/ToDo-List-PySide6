@@ -1,5 +1,5 @@
 from PySide6 import QtCore
-from PySide6.QtWidgets import (QMenu, QApplication, QTreeWidgetItem, QTreeWidget, QComboBox, QListWidget, QInputDialog, QDialog, QLineEdit, QPushButton, QVBoxLayout)
+from PySide6.QtWidgets import (QMessageBox, QMenu, QApplication, QTreeWidgetItem, QTreeWidget, QComboBox, QListWidget, QInputDialog, QDialog, QLineEdit, QPushButton, QVBoxLayout)
 from PySide6.QtGui import QCursor, QAction
 
 class MyWidget(QDialog):
@@ -18,7 +18,7 @@ class MyWidget(QDialog):
         self.tree.setHeaderLabels(["Arbre des taches", "Pourcentage de completion"])
         items = []
         for category in categories:
-            tasks = self.task_service.get_all(category[0])
+            tasks = self.task_service.get_all_by_category(category[0])
             finished_tasks = self.task_service.get_completion_pourcentage(category[0])
             completion = (finished_tasks[0][0] / len(tasks)) * 100
             item = QTreeWidgetItem([category[0], f"{completion:.0f}%"])
@@ -63,23 +63,39 @@ class MyWidget(QDialog):
     @QtCore.Slot()
     def on_item_checked(self, item, column):
         parent = item.parent()
+        task = self.task_service.get_one(item.text(0))
         if item.checkState(column) == QtCore.Qt.Checked:
             self.task_service.checked(True, item.text(column))
+            self.show_done_message(True, task[4])
         else:
             self.task_service.checked(False, item.text(column))
+            self.show_done_message(False, task[4])
         
-        self.update_completion(parent)
+        # self.update_completion(parent)
         
-    def update_completion(self, parent):
-        total_tasks = parent.childCount()
-        done = 0
-        for i in range(total_tasks):
-            child = parent.child(i)
-            if child.checkState(0) == QtCore.Qt.Checked:
-                done += 1
+    def show_done_message(self, is_done, timestamp):
+        msg = QMessageBox(self)
+        msg.setWindowTitle("Statut de la tâche")
+        
+        if is_done:
+            msg.setText(f"Cette tâche a été marquée comme faite le {timestamp}")
+        else:
+            msg.setText(f"Cette tâche a été marquée comme non faite le {timestamp}")
+        
+        msg.setIcon(QMessageBox.Information)
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec()
 
-        completion = (done / total_tasks) * 100
-        parent.setText(1, f"{completion:.0f}%")
+    # def update_completion(self, parent):
+    #     total_tasks = parent.childCount()
+    #     done = 0
+    #     for i in range(total_tasks):
+    #         child = parent.child(i)
+    #         if child.checkState(0) == QtCore.Qt.Checked:
+    #             done += 1
+
+    #     completion = (done / total_tasks) * 100
+    #     parent.setText(1, f"{completion:.0f}%")
 
     @QtCore.Slot()
     def handle_item_pressed(self, item, column):
@@ -136,7 +152,7 @@ class MyWidget(QDialog):
         self.task_service.delete_one(item.text(0))
         if item.parent():
             item.parent().removeChild(item)
-            self.update_completion(item.parent())
+            # self.update_completion(item.parent())
         
     @QtCore.Slot()
     def delete_tasks(self):
