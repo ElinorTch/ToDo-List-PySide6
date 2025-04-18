@@ -24,8 +24,11 @@ class TaskRepositoryImplement(TaskRepository):
         self.cur.execute("DELETE FROM tasks")
         self.con.commit()
     
-    def get_all(self, categorie_label):
+    def get_all_by_category(self, categorie_label):
         return self.cur.execute(f"SELECT * FROM tasks WHERE categorie_label = '{categorie_label}'").fetchall()
+
+    def get_one(self, description):
+        return self.cur.execute(f"SELECT * FROM tasks WHERE description = '{description}'").fetchone()
 
     def checked(self, checked, description):
         self.cur.execute(f"UPDATE tasks SET done = {checked} WHERE description = '{description}'")
