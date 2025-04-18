@@ -15,7 +15,13 @@ class MyWidget(QDialog):
         categories = self.category_service.get_all()
 
         self.tree = QTreeWidget()
-        self.tree.setHeaderLabels(["Arbre des taches", "Pourcentage de completion"])
+        self.tree.setHeaderLabels(["Arbre des taches", "Completion"])
+        self.tree.setColumnWidth(0, 300)  
+        self.tree.setColumnWidth(1, 150)  
+        font = self.tree.headerItem().font(0)
+        font.setBold(True)
+        self.tree.headerItem().setFont(0, font)
+        self.tree.headerItem().setFont(1, font)
         items = []
         for category in categories:
             tasks = self.task_service.get_all_by_category(category[0])
