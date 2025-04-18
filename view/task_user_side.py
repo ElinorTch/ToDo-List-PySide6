@@ -21,7 +21,7 @@ class MyWidget(QDialog):
             tasks = self.task_service.get_all(category[0])
             finished_tasks = self.task_service.get_completion_pourcentage(category[0])
             completion = (finished_tasks[0][0] / len(tasks)) * 100
-            item = QTreeWidgetItem([category[0], f"{completion} %"])
+            item = QTreeWidgetItem([category[0], f"{completion:.0f}%"])
             for task in tasks:
                 child = QTreeWidgetItem([task[1]])
                 item.addChild(child)
@@ -34,6 +34,8 @@ class MyWidget(QDialog):
             items.append(item)
 
         self.tree.insertTopLevelItems(0, items)
+        # self.tree.itemClicked.connect(self.on_item_clicked)
+
         self.tree.itemPressed.connect(self.handle_item_pressed)
         self.tree.itemChanged.connect(self.on_item_checked)
         
@@ -59,13 +61,31 @@ class MyWidget(QDialog):
         main_layout.addWidget(self.category_button_dialog)
         main_layout.addWidget(button)
 
+    # @QtCore.Slot()
+    # def on_item_clicked(self, item):
+    #     print(item.text(0))
+        
 
     @QtCore.Slot()
     def on_item_checked(self, item, column):
+        parent = item.parent()
         if item.checkState(column) == QtCore.Qt.Checked:
             self.task_service.checked(True, item.text(column))
         else:
             self.task_service.checked(False, item.text(column))
+        
+        self.update_completion(parent)
+        
+    def update_completion(self, parent):
+        total_tasks = parent.childCount()
+        done = 0
+        for i in range(total_tasks):
+            child = parent.child(i)
+            if child.checkState(0) == QtCore.Qt.Checked:
+                done += 1
+
+        completion = (done / total_tasks) * 100
+        parent.setText(1, f"{completion:.0f}%")
 
     @QtCore.Slot()
     def handle_item_pressed(self, item, column):
@@ -122,6 +142,7 @@ class MyWidget(QDialog):
         self.task_service.delete_one(item.text(0))
         if item.parent():
             item.parent().removeChild(item)
+            self.update_completion(item.parent())
         
     @QtCore.Slot()
     def delete_tasks(self):
