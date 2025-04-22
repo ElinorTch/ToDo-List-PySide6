@@ -1,11 +1,11 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-from logic.category_repository import CategoryRepository
+from core.ports.category_port import CategoryPort
 import sqlite3
 
-class CategoryRepositoryImplement(CategoryRepository):
+class SqlCategoryRepository(CategoryPort):
     def __init__(self, db_path = "todolist.db"):
         self.con = sqlite3.connect(f"{db_path}")
         self.con.execute("PRAGMA foreign_keys = ON;")

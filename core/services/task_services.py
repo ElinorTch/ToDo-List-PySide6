@@ -1,7 +1,12 @@
-class TaskBusinessLogic():
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-    def __init__(self, task_repository):
-        self.repo = task_repository
+from ports.task_port import TaskPort
+
+class TaskService():
+    def __init__(self, repository: TaskPort):
+        self.repo = repository
 
     def insert(self, description, label):
         self.repo.insert(description, label)

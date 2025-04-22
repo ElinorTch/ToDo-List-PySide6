@@ -1,11 +1,11 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-from logic.task_repository import TaskRepository
+from core.ports.task_port import TaskPort
 import sqlite3
 
-class TaskRepositoryImplement(TaskRepository):
+class SqlTaskRepository(TaskPort):
     
     def __init__(self, db_path = "todolist.db"):
         self.con = sqlite3.connect(f"{db_path}")

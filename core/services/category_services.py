@@ -1,6 +1,12 @@
-class CategoryBusinessLogic():
-    def __init__(self, category_repository_implement):
-        self.repo = category_repository_implement
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from ports.category_port import CategoryPort
+
+class CategoryService():
+    def __init__(self, repository: CategoryPort):
+        self.repo = repository
     
     def insert(self, label):
         self.repo.insert(label)
