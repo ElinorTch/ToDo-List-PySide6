@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class CategoryRepository(ABC):
+class CategoryPort(ABC):
     @abstractmethod
     def insert(self, label) -> None: pass
 
@@ -12,7 +12,5 @@ class CategoryRepository(ABC):
     def delete_all(self): pass
 
     @abstractmethod
-    def getAll(self): pass
-    
-    @abstractmethod
-    def getOne(self, label): pass
+    def get_all(self): pass
+
